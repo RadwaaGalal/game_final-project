@@ -1,24 +1,8 @@
 import pygame
-from random import randrange
-'''import pyautogui
-import _thread
 import time
-
-time.sleep(2)
-
-def kaydir(miktarX, miktarY):
-    pyautogui.moveRel(miktarX, miktarY)
-    print('Press Ctrl-C to quit.')
-try:
-    while True:
-        x, y = pyautogui.position()
-        positionStr = 'X: ' + str(x).rjust(4) + ' Y: ' + str(y).rjust(4)
-        print(positionStr, end='')
-        print('\b' * len(positionStr), end='', flush=True)
-        _thread.start_new_thread(kaydir, (1, 1))
-        time.sleep(0.08)
-except KeyboardInterrupt:
-    print('\n')'''
+import random
+from random import randrange
+from random import randint
 YELLOW = (255, 228, 196)
 BLUE = (30, 144, 255)
 GREEN = (0, 100, 0)
@@ -37,6 +21,7 @@ for row in range(6):
     for column in range(6):
         grid[row].append(0)
 grid[1][0] = 1
+grid[1][1] = 0
 size = [600, 600]
 screen = pygame.display.set_mode(size)
 pygame.init()
@@ -54,7 +39,6 @@ def background_blue():
                               (MARGIN + HEIGHT) * (row + 0.4) + MARGIN,
                               WIDTH,
                               HEIGHT])
-
 def background_green():
     for row in range(4):
         for column in range(4):
@@ -67,12 +51,13 @@ def background_green():
                               (MARGIN + HEIGHT) * (row + 1.4) + MARGIN,
                               WIDTH,
                               HEIGHT])
-
 image2 = pygame.image.load('Image/mouse.png')
 win.blit(image2, (x, y))
 image = pygame.image.load('Image/cat2.png')
 win.blit(image, (120, 120))
 pygame.display.update()
+List_of_movement = [(0, -118), (0, 118), (118, 0), (-118, 0)]
+
 exit = False
 while not exit:
     pygame.draw.rect(win, BLACK, [102, 52, 718, 718])
@@ -83,9 +68,9 @@ while not exit:
     image2 = pygame.image.load('Image/mouse.png')
     win.blit(image2, (x, y))
     pygame.display.update()
+
     for event in pygame.event.get():
-        if x == 155 and y == 200:
-            print("win")
+
         if event.type == pygame.QUIT:
             pygame.quit()
             exit = True
@@ -98,20 +83,13 @@ while not exit:
             y -= HEIGHT
         if key[pygame.K_DOWN]:
             y += HEIGHT
-move = randrange(250, 630, 118)
-for move in range(20):
-    move += WIDTH
-    pygame.draw.rect(win, BLACK, [102, 52, 718, 718])
-    background_blue()
-    background_green()
-    image = pygame.image.load('Image/cat2.png')
-    win.blit(image, (pos_x, pos_y))
-    image2 = pygame.image.load('Image/mouse.png')
-    win.blit(image2, (move, move))
-    pygame.display.update()
-exit = False
-while not exit:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            exit = True
+while True:
+    if x < 250 or x > 630 or y < 200 or y > 570:
+        time.sleep(1)
+        Game_over = pygame.image.load('Image/over.png')
+        win.fill(BLACK)
+        win.blit(Game_over, (50, 100))
+    elif grid[row][column] == 0:
+        time.sleep(1)
+        win = pygame.image.load('Image/win.jpg')
+        win.blit(win, (50, 100))
