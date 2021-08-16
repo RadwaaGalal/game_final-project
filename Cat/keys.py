@@ -89,6 +89,9 @@ while not exit:
     if (mouse_randomx < 250 and mouse_randomy > 420):
         game_over()
         exit = True
+    if mouse_random == cat_random:
+        game_over()
+        exit = True
     elif mouse_randomx < 200 and (mouse_randomy < 420 and mouse_randomy > 300):
         win.fill(BLACK)
         wins = pygame.image.load('Image/wins.png')
