@@ -1,8 +1,4 @@
-import pygame
-import time
-import random
-from random import randrange
-from random import randint
+import pygame, time, random
 YELLOW = (255, 228, 196)
 BLUE = (30, 144, 255)
 GREEN = (0, 100, 0)
@@ -11,22 +7,34 @@ RED = (255, 0, 0)
 WIDTH = 117.6
 HEIGHT = 117.6
 MARGIN = 3
-x = randrange(250, 630, 118)
-y = randrange(200, 570, 118)
-pos_x = randrange(230, 600, 118)
-pos_y = randrange(195, 550, 118)
-grid = []
-for row in range(6):
-    grid.append([])
-    for column in range(6):
-        grid[row].append(0)
-grid[1][0] = 1
-grid[1][1] = 0
 size = [600, 600]
 screen = pygame.display.set_mode(size)
 pygame.init()
 win = pygame.display.set_mode((900, 800))
 win.fill(YELLOW)
+grid = []
+
+for row in range(6):
+    grid.append([])
+    for column in range(6):
+        grid[row].append(0)
+grid[2][0] = 1
+move = [[WIDTH, 0], [-HEIGHT, 0], [0, -WIDTH], [0, HEIGHT]]
+random_x = [368, 486, 590]
+random_y = [200, 318, 436, 545]
+cat_randomx = random.choice(random_x)
+cat_randomy = random.choice(random_y)
+cat_random = (cat_randomx, cat_randomy)
+mouse_randomx = random.choice(random_x)
+mouse_randomy = random.choice(random_y)
+mouse_random = (mouse_randomx, mouse_randomy)
+step = 0
+def movement():
+    i, j = random.choice(move)
+    global mouse_random, mouse_randomy, mouse_randomx
+    mouse_randomy += j
+    mouse_randomx += i
+    mouse_random = (mouse_randomx, mouse_randomy)
 def background_blue():
     for row in range(6):
         for column in range(6):
@@ -51,45 +59,56 @@ def background_green():
                               (MARGIN + HEIGHT) * (row + 1.4) + MARGIN,
                               WIDTH,
                               HEIGHT])
-image2 = pygame.image.load('Image/mouse.png')
-win.blit(image2, (x, y))
-image = pygame.image.load('Image/cat2.png')
-win.blit(image, (120, 120))
-pygame.display.update()
-List_of_movement = [(0, -118), (0, 118), (118, 0), (-118, 0)]
+def game_over():
+    time.sleep(0.2)
+    win.fill(BLACK)
+    Game_over = pygame.image.load('Image/over.png')
+    win.blit(Game_over, (50, 100))
+    time.sleep(1)
+    sound_obj = pygame.mixer.Sound('Image/Game_over.mp3')
+    sound_obj.play()
+    time.sleep(4)
+    sound_obj.stop()
 
+pygame.display.update()
 exit = False
 while not exit:
+    if step == 0:
+        time.sleep(0.5)
+        movement()
     pygame.draw.rect(win, BLACK, [102, 52, 718, 718])
     background_blue()
     background_green()
     image = pygame.image.load('Image/cat2.png')
-    win.blit(image, (pos_x, pos_y))
+    win.blit(image, (cat_randomx, cat_randomy))
     image2 = pygame.image.load('Image/mouse.png')
-    win.blit(image2, (x, y))
+    win.blit(image2, (mouse_randomx, mouse_randomy))
+    if mouse_random == cat_random:
+        game_over()
+        exit = True
+    if (mouse_randomx < 250 and mouse_randomy > 318) or mouse_randomx > 630 or mouse_randomy < 200 or mouse_randomy > 570:
+        game_over()
+        exit = True
+    elif mouse_randomx < 200 and mouse_randomy < 420 and mouse_randomy > 200:
+        win.fill(BLACK)
+        wins = pygame.image.load('Image/wins.png')
+        win.blit(wins, (50, 100))
+        sound_obj = pygame.mixer.Sound('Image/winning.mp3')
+        sound_obj.play()
+        time.sleep(2)
+        sound_obj.stop()
+        exit = True
     pygame.display.update()
-
     for event in pygame.event.get():
-
         if event.type == pygame.QUIT:
             pygame.quit()
             exit = True
         key = pygame.key.get_pressed()
         if key[pygame.K_RIGHT]:
-            x += WIDTH
+            mouse_randomx += WIDTH
         if key[pygame.K_LEFT]:
-            x -= WIDTH
+            mouse_randomx -= WIDTH
         if key[pygame.K_UP]:
-            y -= HEIGHT
+            mouse_randomy -= HEIGHT
         if key[pygame.K_DOWN]:
-            y += HEIGHT
-while True:
-    if x < 250 or x > 630 or y < 200 or y > 570:
-        time.sleep(1)
-        Game_over = pygame.image.load('Image/over.png')
-        win.fill(BLACK)
-        win.blit(Game_over, (50, 100))
-    elif grid[row][column] == 0:
-        time.sleep(1)
-        win = pygame.image.load('Image/win.jpg')
-        win.blit(win, (50, 100))
+            mouse_randomy += HEIGHT
